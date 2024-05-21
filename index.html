@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Leaderboard</title>
+</head>
+<body>
+    <h1>Live Leaderboard</h1>
+    <table id="leaderboard">
+        <thead>
+            <tr>
+                <th>NAME</th>
+                <th>SECTION</th>
+                <th>PTS</th>
+                <th>EXP</th>
+                <th>TOTAL</th>
+                <th>RANK</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboard-body"></tbody>
+    </table>
+
+    <script>
+        async function fetchLeaderboard() {
+            const spreadsheetId = '1CiKBpSY9RqsJIIeJTudUMbaUOzWff9QYwEqPFL8l4OI';
+            const response = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/A1:F100?key=AIzaSyDjUD-51HAlr-v6axtKjFw-IvSA_RjBSg4`);
+            const data = await response.json();
+            const leaderboard = data.values.slice(1); // Exclude header row
+            const tbody = document.getElementById('leaderboard-body');
+            tbody.innerHTML = '';
+            leaderboard.forEach(entry => {
+                const row = `<tr>
+                    <td>${entry[0]}</td>
+                    <td>${entry[1]}</td>
+                    <td>${entry[2]}</td>
+                    <td>${entry[3]}</td>
+                    <td>${entry[4]}</td>
+                    <td>${entry[5]}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Fetch leaderboard on page load
+        fetchLeaderboard();
+        // Refresh leaderboard every 5 seconds
+        setInterval(fetchLeaderboard, 5000);
+    </script>
+</body>
+</html>
